@@ -27,6 +27,7 @@ y = np.array(df['label'])
 
 X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
 clf = svm.SVR(kernel = 'rbf')
+#this is key line which tells classifier what algo to perform
 clf.fit(X_train, y_train)
 accuracy = clf.score(X_test, y_test)
 
