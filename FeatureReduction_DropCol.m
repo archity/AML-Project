@@ -1,3 +1,12 @@
+%% Multivariate Linear Regression with Reduced Features  
+
+%% Objective
+%%
+% In this MATLAB script, linear regression with multiple variabes has been
+% code, built on the same script used earlier, but with 3 of the features
+% reduced because correlation calculations. It gives a very slightly better
+% accuracy (82.9282%) compared to the previous script.
+
 clc
 clear
 close all
@@ -19,11 +28,13 @@ completeOP = xlsObjectComplete(:, 22);
 xlsObjectComplete = xlsObjectComplete(:, 2:21); % Remove the date & OP coloumn
 
 %--------------------------------------------------------------------------
-% Feature reduction
+%%
+% * Feature reduction
 xlsObjectComplete( :, [3, 4, 8] ) = [];   % Remove 3, 4, 8 col
 %--------------------------------------------------------------------------
 
-inputMatrix = xlsObjectComplete(rangeTaken, 1:17);  
+inputMatrix = xlsObjectComplete(rangeTaken, 1:17);
+% Includes ONLY the inputs
 
 thetaWeights = zeros(17+1, 1);
 
@@ -32,11 +43,14 @@ alpha = 0.01;
 iterations = 19000; % Obtained after a few hit and trials.
 
 %--------------------------------------------------------------------------
-% Normalization
+%%
+% * Normalization
 %-------------------------------------------------------------------------
 
 X = inputMatrix;
 X_norm = X;
+% Includes ONLY the inputs
+
 mu = zeros(1, size(X, 2));
 sigma = zeros(1, size(X, 2));
 
@@ -56,10 +70,13 @@ for feature_index = 1:size(X,2)
     mu(feature_index) = feature_mean;
 end
 
-% Repeat the above code for getting complete normalized input matrix
+% Repeat the above code for getting complete normalized input matrix, with
+% ALL the examples.
 
 X = xlsObjectComplete(:, 1:17);
 X_norm_Complete = X;
+% Does NOT include the output
+
 mu = zeros(1, size(X, 2));
 sigma = zeros(1, size(X, 2));
 
@@ -86,7 +103,8 @@ X_norm_Complete = [ones(679, 1), X_norm_Complete];
 
 
 %--------------------------------------------------------------------------
-% Gradient descent algo
+%%
+% * Gradient descent algo
 %--------------------------------------------------------------------------
 
 m = length(SP_Close);
@@ -104,22 +122,25 @@ for i = 1 : iterations
 end
 
 %--------------------------------------------------------------------------
-% Cost function algo
+%%
+% * Cost function algo
 %--------------------------------------------------------------------------
 
 J = 0;
-J = (1 / (2*m) ) * sum(((X_norm * thetaWeights)-y).^2);
+fprintf('Cost function:\n');
+J = (1 / (2*m) ) * sum(((X_norm * thetaWeights)-y).^2)
 
 
 %--------------------------------------------------------------------------
-% Output variable (predicted)
+%%
+% * Output variable (predicted)
 %--------------------------------------------------------------------------
 % Take the 20% (551:679) of all the output variables for testing
 SP_Close_ToBePredicted = completeOP(551:679, 1);
 
 % Preallocate yHat with zeros
 yHat = zeros(129, 1);
-for i = 1 : 17
+for i = 1 : 18
     someTempVar = (thetaWeights(i) * X_norm_Complete(551:679, i));
     yHat = yHat + someTempVar;
 end
