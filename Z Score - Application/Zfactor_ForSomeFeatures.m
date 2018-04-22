@@ -61,9 +61,12 @@ for feature_index = 6 : 14
     figure;
     hist( X_norm(:, feature_index), 15 );
 end
+%--------------------------------------------------------------------------
+%-------------------APPLYING Z NORMALIZATION TO ORIGINAL MATRIX------------
+%--------------------------------------------------------------------------
 
 indexToIterate = [3, 4, 6:14];  % indices to iterate over
-minMaxMatrix = [-2.75, 2.6; -2.31, 3.57; -2, 3.4; -1.2, 3.75; -1.2, 3.06; -1.5, 3.3; -1.4, 3.4; -1.8, 2.38; -1.6, 3.8; -1.5, 2.77; -1.8, 2.95];
+minMaxMatrix = [-2.75, 2.6; -2.125, 3.50; -2, 3.4; -1, 3.75; -0.63, 3.38; -1.4, 3.28; -0.9, 2.9; -1.75, 1.99; -1.4, 2.95; -1.3, 2.85; -1.56, 2.89];
 % This will form a matrix just like the one @Anoushkrit made it in the
 % spreadsheet file which he gave to @Archit.
 
@@ -73,7 +76,7 @@ count = 0;
 
 for i = 1 : size(indexToIterate)    % 1:11
     for j = 1 : 679
-        if( X_norm(j, indexToIterate(i)) < minMaxMatrix(i, 1) || X_norm(j, indexToIterate(i)) > minMaxMatrix(i, 2))
+        if( X_norm( j, indexToIterate(i) ) < minMaxMatrix(i, 1) || X_norm( j, indexToIterate(i) ) > minMaxMatrix(i, 2))
             % The above condition is TRUE, ONLY IF the dataPoint lies
             % outside the range written by @Anoushkrit. 'minMaxMatrix(i,1)'
             % corresponds to minimum value of ith coloumn and
@@ -87,3 +90,22 @@ for i = 1 : size(indexToIterate)    % 1:11
         end
     end
 end
+%--------------------------------------------------------------------------
+
+% Now xlsObjectComplete will be completely modified using the formulaue of
+% {xi-min(xi)} / {max(xi)-min(xi)}
+
+for i = 1 : size( xlsObjectComplete, 2 )
+    
+    minValue = min(xlsObjectComplete(:, i));
+    % Get the min value of ith coloumn
+    
+    maxValue = max(xlsObjectComplete(:, i));
+    % Get the min value of ith coloumn
+    
+    for j = 1 : 679
+        xlsObjectComplete(j, i) = ( xlsObjectComplete(j, i) - minValue ) / ( maxValue - minValue );
+    end
+end
+
+xlswrite('zFactorToSome_Plus_NormalizationToAll.xls', xlsObjectComplete);
